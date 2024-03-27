@@ -72,6 +72,7 @@ class _scoreboardState extends State<scoreboard> {
     });
   }
 
+//cha
   void reducePlayer2Score() {
     setState(() {
       if (player2Score > 0) {
