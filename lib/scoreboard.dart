@@ -34,6 +34,7 @@ class _scoreboardState extends State<scoreboard> {
   int player2Score = 0;
   int player1Set = 0;
   int player2Set = 0;
+  String setScore = "";
 
   void addPlayer1Score() {
     setState(() {
@@ -43,6 +44,7 @@ class _scoreboardState extends State<scoreboard> {
       }
       if (player1Score >= 11 && player1Score - player2Score >= 2) {
         player1Set++;
+        recordScore();
         resetScore();
       }
     });
@@ -56,9 +58,15 @@ class _scoreboardState extends State<scoreboard> {
       }
       if (player2Score >= 11 && player2Score - player1Score >= 2) {
         player2Set++;
+        recordScore();
         resetScore();
       }
     });
+  }
+
+  Text recordScore() {
+    setScore = "${player1Score} - ${player2Score}";
+    return Text(setScore);
   }
 
   void reducePlayer1Score() {
@@ -247,6 +255,16 @@ class _scoreboardState extends State<scoreboard> {
                 ElevatedButton(onPressed: reducePlayer1Score, child: Text("-")),
                 ElevatedButton(onPressed: reducePlayer2Score, child: Text("-")),
               ],
+            ),
+            Container(
+              alignment: AlignmentDirectional.center,
+              width: 100,
+              height: 20,
+              decoration: BoxDecoration(
+                  color: Color.fromARGB(255, 188, 188, 211),
+                  borderRadius: BorderRadius.circular(5)),
+              child:
+                  Text(setScore, style: Theme.of(context).textTheme.labelLarge),
             )
           ],
         ),
