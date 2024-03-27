@@ -1,6 +1,6 @@
-# ttsb
+# TTSB
 
-A new Flutter project.
+A Table Tennis Score Board
 
 ## Getting Started
 
