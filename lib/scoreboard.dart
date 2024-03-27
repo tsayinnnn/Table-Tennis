@@ -19,6 +19,16 @@ class scoreboard extends StatefulWidget {
   State<scoreboard> createState() => _scoreboardState();
 }
 
+class Responsive {
+  static double width(double percentage, BuildContext context) {
+    return MediaQuery.of(context).size.width * (percentage / 100);
+  }
+
+  static double height(double percentage, BuildContext context) {
+    return MediaQuery.of(context).size.height * (percentage / 100);
+  }
+}
+
 class _scoreboardState extends State<scoreboard> {
   int player1Score = 0;
   int player2Score = 0;
@@ -55,6 +65,9 @@ class _scoreboardState extends State<scoreboard> {
     setState(() {
       if (player1Score > 0) {
         player1Score--;
+        if ((player1Score + player2Score) % 2 != 0) {
+          widget.p1serve = !widget.p1serve;
+        }
       }
     });
   }
@@ -63,6 +76,9 @@ class _scoreboardState extends State<scoreboard> {
     setState(() {
       if (player2Score > 0) {
         player2Score--;
+        if ((player1Score + player2Score) % 2 != 0) {
+          widget.p1serve = !widget.p1serve;
+        }
       }
     });
   }
@@ -85,11 +101,11 @@ class _scoreboardState extends State<scoreboard> {
         });
       }
     } else {
-      if (player1Set == 3) {
+      if (player1Set == 5) {
         setState(() {
           Winner(winner: widget.p1Name);
         });
-      } else if (player2Set == 3) {
+      } else if (player2Set == 5) {
         setState(() {
           Winner(winner: widget.p2Name);
         });
@@ -120,84 +136,100 @@ class _scoreboardState extends State<scoreboard> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Container(
-                  width: 30,
-                  height: 30,
-                  decoration: BoxDecoration(
-                    color: widget.p1serve ? Colors.green : Colors.grey,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+                Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: widget.p1serve ? Colors.green : Colors.grey,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                          color: Color.fromARGB(255, 223, 211, 174),
+                          borderRadius: BorderRadius.circular(15)),
+                      child: Center(
+                        child: Text(
+                          '$player1Set',
+                          style: Theme.of(context).textTheme.headlineSmall,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                Container(
-                  width: 100,
-                  height: 150,
-                  decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 188, 207, 211),
-                      borderRadius: BorderRadius.circular(15)),
-                  child: Center(
-                    child: Text(
-                      '$player1Score',
-                      style: Theme.of(context).textTheme.headlineLarge,
-                      textAlign: TextAlign.center,
+                Padding(
+                  padding: const EdgeInsets.only(
+                      top: 8, bottom: 8, left: 2, right: 8),
+                  child: Container(
+                    width: Responsive.width(30, context),
+                    height: Responsive.height(30, context),
+                    decoration: BoxDecoration(
+                        color: Color.fromARGB(255, 188, 207, 211),
+                        borderRadius: BorderRadius.circular(15)),
+                    child: Center(
+                      child: Text(
+                        '$player1Score',
+                        style: Theme.of(context).textTheme.headlineLarge,
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                   ),
                 ),
-                Container(
-                  width: 100,
-                  height: 150,
-                  decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 188, 207, 211),
-                      borderRadius: BorderRadius.circular(15)),
-                  child: Center(
-                    child: Text(
-                      '$player2Score',
-                      style: Theme.of(context).textTheme.headlineLarge,
-                      textAlign: TextAlign.center,
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: 8, top: 8, bottom: 8, right: 2),
+                  child: Container(
+                    width: Responsive.width(30, context),
+                    height: Responsive.height(30, context),
+                    decoration: BoxDecoration(
+                        color: Color.fromARGB(255, 188, 207, 211),
+                        borderRadius: BorderRadius.circular(15)),
+                    child: Center(
+                      child: Text(
+                        '$player2Score',
+                        style: Theme.of(context).textTheme.headlineLarge,
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                   ),
                 ),
-                Container(
-                  width: 30,
-                  height: 30,
-                  decoration: BoxDecoration(
-                    color: widget.p1serve ? Colors.grey : Colors.green,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ],
-            ),
-            // set scores
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 223, 211, 174),
-                      borderRadius: BorderRadius.circular(15)),
-                  child: Center(
-                    child: Text(
-                      '$player1Set',
-                      style: Theme.of(context).textTheme.headlineSmall,
-                      textAlign: TextAlign.center,
+                Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: widget.p1serve ? Colors.grey : Colors.green,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
                     ),
-                  ),
+                    Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                          color: Color.fromARGB(255, 223, 211, 174),
+                          borderRadius: BorderRadius.circular(15)),
+                      child: Center(
+                        child: Text(
+                          '$player2Set',
+                          style: Theme.of(context).textTheme.headlineSmall,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    )
+                  ],
                 ),
-                Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 223, 211, 174),
-                      borderRadius: BorderRadius.circular(15)),
-                  child: Center(
-                    child: Text(
-                      '$player2Set',
-                      style: Theme.of(context).textTheme.headlineSmall,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                )
               ],
             ),
             //buttons
