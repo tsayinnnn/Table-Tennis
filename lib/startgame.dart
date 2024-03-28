@@ -15,9 +15,6 @@ class _startGameState extends State<startGame> {
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      appBar: AppBar(
-        actions: [],
-      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -31,7 +28,7 @@ class _startGameState extends State<startGame> {
 
             // button navigation
             ElevatedButton(
-              onPressed: () => context.go('/game'),
+              onPressed: () => context.push('/game'),
               child: const Text("Start Game"),
             )
           ],

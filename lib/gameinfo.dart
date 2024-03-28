@@ -67,13 +67,13 @@ class _gameState extends State<game> {
                   ChoiceChip(
                     label: const Text('Player 1'),
                     selected: isplayer1serve,
-                    onSelected: (selected) => _setFirstPlayer(selected),
+                    onSelected: (selected) => _setFirstPlayer(true),
                   ),
                   SizedBox(width: 4.w),
                   ChoiceChip(
                     label: const Text('Player 2'),
                     selected: !isplayer1serve,
-                    onSelected: (selected) => _setFirstPlayer(!selected),
+                    onSelected: (selected) => _setFirstPlayer(false),
                   ),
                 ],
               ),
@@ -85,13 +85,13 @@ class _gameState extends State<game> {
                   ChoiceChip(
                     label: const Text('Best of 3'),
                     selected: isThreeSet,
-                    onSelected: (selected) => _setGameMode(selected),
+                    onSelected: (selected) => _setGameMode(true),
                   ),
                   SizedBox(width: 4.w),
                   ChoiceChip(
                     label: const Text('Best of 5'),
                     selected: !isThreeSet,
-                    onSelected: (selected) => _setGameMode(!selected),
+                    onSelected: (selected) => _setGameMode(false),
                   ),
                 ],
               ),
