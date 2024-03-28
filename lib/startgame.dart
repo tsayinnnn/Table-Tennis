@@ -1,4 +1,3 @@
-import 'package:easy_dynamic_theme/easy_dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -28,7 +27,7 @@ class _startGameState extends State<startGame> {
 
             // button navigation
             ElevatedButton(
-              onPressed: () => context.push('/game'),
+              onPressed: () => context.pushReplacement('/game'),
               child: const Text("Start Game"),
             )
           ],

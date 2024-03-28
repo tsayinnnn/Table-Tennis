@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:ttsb/winner.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class scoreboard extends StatefulWidget {
   final String p1Name;
@@ -8,25 +10,15 @@ class scoreboard extends StatefulWidget {
   final bool threegame;
 
   scoreboard({
-    Key? key,
+    super.key,
     required this.p1Name,
     required this.p2Name,
     required this.p1serve,
     required this.threegame,
-  }) : super(key: key);
+  });
 
   @override
   State<scoreboard> createState() => _scoreboardState();
-}
-
-class Responsive {
-  static double width(double percentage, BuildContext context) {
-    return MediaQuery.of(context).size.width * (percentage / 100);
-  }
-
-  static double height(double percentage, BuildContext context) {
-    return MediaQuery.of(context).size.height * (percentage / 100);
-  }
 }
 
 class _scoreboardState extends State<scoreboard> {
@@ -35,38 +27,50 @@ class _scoreboardState extends State<scoreboard> {
   int player1Set = 0;
   int player2Set = 0;
   String setScore = "";
+  late bool serve;
 
-  void addPlayer1Score() {
+  @override
+  void initState() {
+    super.initState();
+    serve = widget.p1serve;
+  }
+
+  void addPlayer1Score(BuildContext context) {
     setState(() {
       player1Score++;
       if ((player1Score + player2Score) % 2 == 0) {
-        widget.p1serve = !widget.p1serve;
+        serve = !serve;
       }
-      if (player1Score >= 11 && player1Score - player2Score >= 2) {
+      if ((player1Score >= 11 && player1Score - player2Score >= 2) ||
+          (player1Score > 10 &&
+              player2Score > 10 &&
+              player1Score - player2Score == 2)) {
         player1Set++;
         recordScore();
-        resetScore();
+        resetScore(context);
       }
     });
   }
 
-  void addPlayer2Score() {
+  void addPlayer2Score(BuildContext context) {
     setState(() {
       player2Score++;
       if ((player1Score + player2Score) % 2 == 0) {
-        widget.p1serve = !widget.p1serve;
+        serve = !serve;
       }
-      if (player2Score >= 11 && player2Score - player1Score >= 2) {
+      if ((player2Score >= 11 && player2Score - player1Score >= 2) ||
+          (player1Score > 10 &&
+              player2Score > 10 &&
+              player2Score - player1Score == 2)) {
         player2Set++;
         recordScore();
-        resetScore();
+        resetScore(context);
       }
     });
   }
 
-  Text recordScore() {
-    setScore = "${player1Score} - ${player2Score}";
-    return Text(setScore);
+  void recordScore() {
+    setScore = "$player1Score - $player2Score";
   }
 
   void reducePlayer1Score() {
@@ -74,57 +78,76 @@ class _scoreboardState extends State<scoreboard> {
       if (player1Score > 0) {
         player1Score--;
         if ((player1Score + player2Score) % 2 != 0) {
-          widget.p1serve = !widget.p1serve;
+          serve = !serve;
         }
       }
     });
   }
 
-//cha
   void reducePlayer2Score() {
     setState(() {
       if (player2Score > 0) {
         player2Score--;
         if ((player1Score + player2Score) % 2 != 0) {
-          widget.p1serve = !widget.p1serve;
+          serve = !serve;
         }
       }
     });
   }
 
-  void resetScore() {
+  void resetScore(BuildContext context) {
     player1Score = 0;
     player2Score = 0;
-    gameSet();
+    gameSet(context);
   }
 
-  void gameSet() {
+  void gameSet(BuildContext context) async {
     if (widget.threegame) {
-      if (player1Set == 2) {
-        setState(() {
-          Winner(winner: widget.p1Name);
-        });
-      } else if (player2Set == 2) {
-        setState(() {
-          Winner(winner: widget.p2Name);
-        });
+      if (player1Set >= 2) {
+        await showWinner(context, widget.p1Name);
+      } else if (player2Set >= 2) {
+        await showWinner(context, widget.p2Name);
       }
     } else {
-      if (player1Set == 5) {
-        setState(() {
-          Winner(winner: widget.p1Name);
-        });
-      } else if (player2Set == 5) {
-        setState(() {
-          Winner(winner: widget.p2Name);
-        });
+      if (player1Set >= 3) {
+        await showWinner(context, widget.p1Name);
+      } else if (player2Set >= 3) {
+        await showWinner(context, widget.p2Name);
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
+      appBar: AppBar(
+        actions: [
+          IconButton(
+            icon: const FaIcon(FontAwesomeIcons.rightToBracket),
+            onPressed: () async {
+              await showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text("New Game?"),
+                  actions: [
+                    TextButton(
+                      child: const Text("Cancel"),
+                      onPressed: () => context.pop(),
+                    ),
+                    TextButton(
+                      child: const Text("Confirm"),
+                      onPressed: () => context.pushReplacement('/'),
+                    )
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -139,7 +162,7 @@ class _scoreboardState extends State<scoreboard> {
             // names
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [Text('${widget.p1Name}'), Text('${widget.p2Name}')],
+              children: [Text(widget.p1Name), Text(widget.p2Name)],
             ),
             //box
             Row(
@@ -148,91 +171,87 @@ class _scoreboardState extends State<scoreboard> {
                 Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
+                      padding: EdgeInsets.only(bottom: 1.h),
                       child: Container(
-                        width: 30,
-                        height: 30,
+                        width: 8.w,
+                        height: 8.w,
                         decoration: BoxDecoration(
-                          color: widget.p1serve ? Colors.green : Colors.grey,
+                          color:
+                              serve ? Colors.green : colorScheme.surfaceVariant,
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
                     ),
                     Container(
-                      width: 50,
-                      height: 50,
+                      width: 13.w,
+                      height: 13.w,
                       decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 223, 211, 174),
+                          color: colorScheme.tertiaryContainer,
                           borderRadius: BorderRadius.circular(15)),
                       child: Center(
                         child: Text(
                           '$player1Set',
-                          style: Theme.of(context).textTheme.headlineSmall,
+                          style: textTheme.headlineSmall,
                           textAlign: TextAlign.center,
                         ),
                       ),
                     ),
                   ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      top: 8, bottom: 8, left: 2, right: 8),
-                  child: Container(
-                    width: Responsive.width(30, context),
-                    height: Responsive.height(30, context),
-                    decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 188, 207, 211),
-                        borderRadius: BorderRadius.circular(15)),
-                    child: Center(
-                      child: Text(
-                        '$player1Score',
-                        style: Theme.of(context).textTheme.headlineLarge,
-                        textAlign: TextAlign.center,
-                      ),
+                Container(
+                  width: 30.w,
+                  height: 30.h,
+                  decoration: BoxDecoration(
+                      color: colorScheme.primaryContainer,
+                      borderRadius: BorderRadius.circular(15)),
+                  child: Center(
+                    child: Text(
+                      '$player1Score',
+                      style: textTheme.headlineLarge,
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      left: 8, top: 8, bottom: 8, right: 2),
-                  child: Container(
-                    width: Responsive.width(30, context),
-                    height: Responsive.height(30, context),
-                    decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 188, 207, 211),
-                        borderRadius: BorderRadius.circular(15)),
-                    child: Center(
-                      child: Text(
-                        '$player2Score',
-                        style: Theme.of(context).textTheme.headlineLarge,
-                        textAlign: TextAlign.center,
-                      ),
+                Container(
+                  width: 30.w,
+                  height: 30.h,
+                  decoration: BoxDecoration(
+                    color: colorScheme.primaryContainer,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Center(
+                    child: Text(
+                      '$player2Score',
+                      style: textTheme.headlineLarge,
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 ),
                 Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
+                      padding: EdgeInsets.only(bottom: 1.h),
                       child: Container(
-                        width: 30,
-                        height: 30,
+                        width: 8.w,
+                        height: 8.w,
                         decoration: BoxDecoration(
-                          color: widget.p1serve ? Colors.grey : Colors.green,
+                          color:
+                              serve ? colorScheme.surfaceVariant : Colors.green,
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
                     ),
                     Container(
-                      width: 50,
-                      height: 50,
+                      width: 13.w,
+                      height: 13.w,
                       decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 223, 211, 174),
-                          borderRadius: BorderRadius.circular(15)),
+                        color: colorScheme.tertiaryContainer,
+                        borderRadius: BorderRadius.circular(15),
+                      ),
                       child: Center(
                         child: Text(
                           '$player2Set',
-                          style: Theme.of(context).textTheme.headlineSmall,
+                          style: textTheme.headlineSmall,
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -245,30 +264,68 @@ class _scoreboardState extends State<scoreboard> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                ElevatedButton(onPressed: addPlayer1Score, child: Text("+")),
-                ElevatedButton(onPressed: addPlayer2Score, child: Text("+")),
+                ElevatedButton(
+                  onPressed: () => addPlayer1Score(context),
+                  child: const FaIcon(FontAwesomeIcons.plus),
+                ),
+                ElevatedButton(
+                  onPressed: () => addPlayer2Score(context),
+                  child: const FaIcon(FontAwesomeIcons.plus),
+                ),
               ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                ElevatedButton(onPressed: reducePlayer1Score, child: Text("-")),
-                ElevatedButton(onPressed: reducePlayer2Score, child: Text("-")),
+                ElevatedButton(
+                  onPressed: reducePlayer1Score,
+                  child: const FaIcon(FontAwesomeIcons.minus),
+                ),
+                ElevatedButton(
+                  onPressed: reducePlayer2Score,
+                  child: const FaIcon(FontAwesomeIcons.minus),
+                ),
               ],
             ),
+            SizedBox(height: 2.h),
             Container(
               alignment: AlignmentDirectional.center,
-              width: 100,
-              height: 20,
+              padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 1.h),
+              width: 32.w,
+              height: 7.5.h,
               decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 188, 188, 211),
-                  borderRadius: BorderRadius.circular(5)),
-              child:
-                  Text(setScore, style: Theme.of(context).textTheme.labelLarge),
+                color: colorScheme.secondaryContainer,
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: Column(
+                children: [
+                  const Text("Previous score:"),
+                  Text(setScore, style: textTheme.labelLarge),
+                ],
+              ),
             )
           ],
         ),
       ),
     );
   }
+}
+
+Future<void> showWinner(BuildContext context, String name) async {
+  await showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: Text("$name wins!"),
+        icon: const Center(child: FaIcon(FontAwesomeIcons.trophy)),
+        actions: [
+          TextButton(
+            child: const Text("Confirm"),
+            onPressed: () => context.pop(),
+          ),
+        ],
+      );
+    },
+  );
+  context.pushReplacement('/');
 }
