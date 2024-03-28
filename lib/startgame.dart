@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ttsb/gameinfo.dart';
+import 'package:go_router/go_router.dart';
 
 class startGame extends StatelessWidget {
   const startGame({super.key});
@@ -15,13 +15,12 @@ class startGame extends StatelessWidget {
           children: [
             //logo
             Image.asset('assets/logo.png'),
+
             // button navigation
             ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                      context, MaterialPageRoute(builder: (context) => game()));
-                },
-                child: Text("Start Game"))
+              onPressed: () => context.go('/game'),
+              child: const Text("Start Game"),
+            )
           ],
         ),
       ),

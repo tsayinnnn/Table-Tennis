@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ttsb/startgame.dart';
+import 'package:ttsb/routes.dart';
 
 void main() async {
   runApp(const TTSB());
@@ -10,9 +10,9 @@ class TTSB extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowMaterialGrid: false,
-      home: startGame(),
+    return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
+      routerConfig: routes,
     );
   }
 }
