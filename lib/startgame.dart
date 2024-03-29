@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:ttsb/gameinfo.dart';
+import 'package:go_router/go_router.dart';
 
-class startGame extends StatelessWidget {
+class startGame extends StatefulWidget {
   const startGame({super.key});
 
   @override
+  State<startGame> createState() => _startGameState();
+}
+
+class _startGameState extends State<startGame> {
+  @override
   Widget build(BuildContext context) {
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       body: Center(
         child: Column(
@@ -14,14 +21,15 @@ class startGame extends StatelessWidget {
           mainAxisSize: MainAxisSize.max,
           children: [
             //logo
-            Image.asset('assets/logo.png'),
+            isDarkMode
+                ? Image.asset('assets/logo_dark.png')
+                : Image.asset('assets/logo.png'),
+
             // button navigation
             ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                      context, MaterialPageRoute(builder: (context) => game()));
-                },
-                child: Text("Start Game"))
+              onPressed: () => context.pushReplacement('/game'),
+              child: const Text("Start Game"),
+            )
           ],
         ),
       ),
