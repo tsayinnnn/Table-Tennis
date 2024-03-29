@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -151,24 +152,22 @@ class _scoreboardState extends State<scoreboard> {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
+          //  crossAxisAlignment: CrossAxisAlignment.center,
+          //mainAxisSize: MainAxisSize.max,
           children: [
             Image.asset(
               'assets/logo.png',
               width: 100,
               height: 100,
             ),
-            // names
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [Text(widget.p1Name), Text(widget.p2Name)],
-            ),
-            //box
+            //content columns
+
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+                //row 1 - 1serve and set score
                 Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Padding(
                       padding: EdgeInsets.only(bottom: 1.h),
@@ -182,6 +181,8 @@ class _scoreboardState extends State<scoreboard> {
                         ),
                       ),
                     ),
+
+                    //score board a
                     Container(
                       width: 13.w,
                       height: 13.w,
@@ -198,39 +199,93 @@ class _scoreboardState extends State<scoreboard> {
                     ),
                   ],
                 ),
-                Container(
-                  width: 30.w,
-                  height: 30.h,
-                  decoration: BoxDecoration(
-                      color: colorScheme.primaryContainer,
-                      borderRadius: BorderRadius.circular(15)),
-                  child: Center(
-                    child: Text(
-                      '$player1Score',
-                      style: textTheme.headlineLarge,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-                Container(
-                  width: 30.w,
-                  height: 30.h,
-                  decoration: BoxDecoration(
-                    color: colorScheme.primaryContainer,
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Center(
-                    child: Text(
-                      '$player2Score',
-                      style: textTheme.headlineLarge,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
+                //row 2- s1 name, score, row of buttons
                 Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(widget.p1Name),
+                    Container(
+                      width: 30.w,
+                      height: 30.h,
+                      decoration: BoxDecoration(
+                          color: colorScheme.primaryContainer,
+                          borderRadius: BorderRadius.circular(15)),
+                      child: Center(
+                        child: Text(
+                          '$player1Score',
+                          style: textTheme.headlineLarge,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 10),
+                          child: ElevatedButton(
+                            onPressed: () => addPlayer1Score(context),
+                            child: const FaIcon(FontAwesomeIcons.plus),
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: reducePlayer1Score,
+                          child: const FaIcon(FontAwesomeIcons.minus),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                //row 3 - s2 name, score, row of buttons
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(widget.p2Name),
+                    Container(
+                      width: 30.w,
+                      height: 30.h,
+                      decoration: BoxDecoration(
+                        color: colorScheme.primaryContainer,
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Center(
+                        child: Text(
+                          '$player2Score',
+                          style: textTheme.headlineLarge,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 10),
+                          child: ElevatedButton(
+                            onPressed: () => addPlayer2Score(context),
+                            child: const FaIcon(FontAwesomeIcons.plus),
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: reducePlayer2Score,
+                          child: const FaIcon(FontAwesomeIcons.minus),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                //row 4 - 2serve and set score
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Padding(
-                      padding: EdgeInsets.only(bottom: 1.h),
+                      padding: const EdgeInsets.only(bottom: 10),
                       child: Container(
                         width: 8.w,
                         height: 8.w,
@@ -255,35 +310,8 @@ class _scoreboardState extends State<scoreboard> {
                           textAlign: TextAlign.center,
                         ),
                       ),
-                    )
+                    ),
                   ],
-                ),
-              ],
-            ),
-            //buttons
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  onPressed: () => addPlayer1Score(context),
-                  child: const FaIcon(FontAwesomeIcons.plus),
-                ),
-                ElevatedButton(
-                  onPressed: () => addPlayer2Score(context),
-                  child: const FaIcon(FontAwesomeIcons.plus),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  onPressed: reducePlayer1Score,
-                  child: const FaIcon(FontAwesomeIcons.minus),
-                ),
-                ElevatedButton(
-                  onPressed: reducePlayer2Score,
-                  child: const FaIcon(FontAwesomeIcons.minus),
                 ),
               ],
             ),
