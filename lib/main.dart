@@ -1,21 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:ttsb/routes.dart';
-import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:dynamic_color/dynamic_color.dart';
 
 void main() async {
-  runApp(ResponsiveSizer(builder: (context, orientation, screenType) {
-    return AdaptiveTheme(
-        light: ThemeData.light(useMaterial3: true),
-        dark: ThemeData.dark(useMaterial3: true),
-        initial: AdaptiveThemeMode.light,
-        builder: (theme, darkTheme) {
-          return MaterialApp.router(
-            debugShowCheckedModeBanner: false,
-            theme: theme,
-            darkTheme: darkTheme,
-            routerConfig: routes,
-          );
-        });
-  }));
+  runApp(
+    ResponsiveSizer(
+      builder: (context, orientation, screenType) {
+        return DynamicColorBuilder(
+          builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
+            // Themes
+            final lightTheme = ThemeData(
+              colorScheme: lightDynamic,
+              brightness: Brightness.light,
+            );
+            final darkTheme = ThemeData(
+              colorScheme: darkDynamic,
+              brightness: Brightness.dark,
+            );
+
+            // The main app
+            return MaterialApp.router(
+              debugShowCheckedModeBanner: false,
+              theme: lightTheme,
+              darkTheme: darkTheme,
+              themeMode: ThemeMode.system,
+              routerConfig: routes,
+            );
+          },
+        );
+      },
+    ),
+  );
 }
